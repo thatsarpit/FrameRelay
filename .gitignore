@@ -1,0 +1,16 @@
+.DS_Store
+build/
+.local/
+*.provisionprofile
+*.mobileprovision
+*.p12
+*.cer
+*.key
+*.pem
+*.mkv
+*.mp4
+*.mov
+*.log
+.env*
+__pycache__/
+*.pyc

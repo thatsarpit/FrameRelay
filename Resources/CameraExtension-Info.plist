@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>media.voyd.FrameRelay.CameraExtension</string>
+<key>CFBundleName</key><string>FrameRelay Camera</string>
+<key>CFBundleExecutable</key><string>FrameRelayCameraExtension</string>
+<key>CFBundlePackageType</key><string>SYSX</string>
+<key>CFBundleShortVersionString</key><string>0.1.0</string>
+<key>CFBundleVersion</key><string>1</string>
+<key>LSMinimumSystemVersion</key><string>14.0</string>
+<key>FrameRelayTeamIdentifier</key><string>TEAM_ID</string>
+<key>CMIOExtension</key><dict><key>CMIOExtensionMachServiceName</key><string>TEAM_ID.media.voyd.FrameRelay.CameraExtension</string></dict>
+<key>NSSystemExtensionUsageDescription</key><string>Make the video received by FrameRelay available as a camera input.</string>
+</dict></plist>
