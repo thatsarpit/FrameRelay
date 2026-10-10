@@ -93,10 +93,13 @@ struct StudioView: View {
                 }
                 card("Virtual camera · \(model.camera.status)") {
                     Text(model.camera.explanation).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    Picker("Provider", selection: Binding(get: { model.camera.provider }, set: { model.camera.provider = $0 })) { ForEach(CameraProvider.allCases) { Text($0.title).tag($0) } }.disabled(model.camera.enabled)
                     HStack {
-                        Button("Activate extension") { model.camera.install() }.disabled(!model.camera.canActivate)
-                        Button(model.camera.enabled ? "Disconnect" : "Connect output") { if model.camera.enabled { model.camera.disconnect() } else { model.camera.connect() } }.disabled(!model.camera.available)
+                        if model.camera.provider == .virtualCamera4Mac { Button("Open provider") { model.camera.openProvider() } }
+                        else { Button("Activate extension") { model.camera.install() }.disabled(!model.camera.canActivate) }
+                        Button(model.camera.enabled ? "Disconnect" : "Connect output") { if model.camera.enabled { model.camera.autoConnect = false; model.camera.disconnect() } else { model.camera.connect() } }.disabled(!model.camera.available)
                     }.controlSize(.small)
+                    Toggle("Connect webcam automatically", isOn: Binding(get: { model.camera.autoConnect }, set: { model.camera.autoConnect = $0 })).font(.caption)
                 }
             }
             if !model.engine.lastError.isEmpty { Text(model.engine.lastError).font(.system(size: 11, design: .monospaced)).foregroundStyle(accent).textSelection(.enabled).lineLimit(6) }
@@ -161,7 +164,7 @@ struct StudioView: View {
     private var cameras: some View {
         VStack(spacing: 18) {
             card("LUMIX S5IIX · tested transport") {
-                Text("Firmware 2.2: Wi-Fi RTMP, H.264 1920×1080/25 + AAC. A real 30-second stream was received in development. The new app's live-camera endurance and virtual-camera output still need testing.").font(.callout)
+                Text("Firmware 2.2: Wi-Fi RTMP, H.264 1920×1080/25 + AAC. Several short real-camera takes passed full decode. Longer sessions and virtual-camera output still need testing.").font(.callout)
                 Text("Setup → IN/OUT → Streaming. Choose Wi-Fi, join the router, choose FHD/6M/25p or 30p, enter FrameRelay's destination, enable streaming, then press video record. Start FrameRelay first.").font(.callout)
                 Text("Firmware 2.2 changes: wired RTP/RTSP removed. European models require RTMPS; this preview cannot receive those directly.").font(.caption).foregroundStyle(.secondary)
                 Link("Panasonic firmware-specific guide ↗", destination: URL(string: "https://eww.pavc.panasonic.co.jp/dscoi/DC-S5M2X/html/DC-S5M2X_DVQP2992_eng/0197.html")!)

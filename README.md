@@ -30,7 +30,7 @@ FrameRelay started with a simple problem: a good mirrorless camera at a desk, an
 - Opt-in login startup and opt-in receiver auto-start.
 - No account, telemetry or cloud uploads. Settings and clips remain local.
 
-**The virtual camera is not ready to use in this receiver-only build.** Modern Core Media IO source/sink extension code and a signed packaging path are included, and compile on the development Mac. Proper Apple signing, provisioning, activation and application tests are still required. No working Recordly/Zoom/Meet camera claim is made. [Read the exact status](docs/VIRTUAL_CAMERA.md).
+**Webcam output can use the separately signed [VirtualCamera4Mac](https://github.com/m96-chan/VirtualCamera4Mac) provider without your own Apple membership.** Install and approve its official release separately, then connect output in FrameRelay and select it in your video app. The native producer is implemented; activation and application tests are documented as they are completed. FrameRelay's own extension remains compile-only and needs developer signing. [Exact setup and test status](docs/VIRTUAL_CAMERA.md).
 
 ## Getting started
 
@@ -58,7 +58,7 @@ Install the app in a stable Applications location before enabling login startup.
 
 ## Picture and sound
 
-Recordings preserve the source codec, size and frame rate. The live preview and planned webcam bridge convert frames to 1920×1080 BGRA at 30 fps with letterboxing. Lower-resolution input is not magically native HD. The UI preview updates around 10 fps to reduce UI work; the bridge receives the decoded 30 fps frames.
+Recordings preserve the source codec, size and frame rate. The live preview and webcam bridge convert frames to 1920×1080 BGRA at 30 fps with letterboxing. Lower-resolution input is not magically native HD. The UI preview updates around 10 fps to reduce UI work; the bridge receives the decoded 30 fps frames.
 
 Camera audio can be saved in clips. There is no live audio monitor or virtual microphone. Select a separate microphone in the video application. H.264/AAC is the recommended tested combination; unsupported MP4 codecs may keep an MKV instead. Network delay and lip sync require a real session check.
 
@@ -66,7 +66,7 @@ Camera audio can be saved in clips. There is no live audio monitor or virtual mi
 
 | Source | Evidence |
 | --- | --- |
-| Panasonic LUMIX S5IIX, firmware 2.2, RTMP-capable region | Real 1080p25 H.264/AAC transport captured in development; full new-app endurance still pending |
+| Panasonic LUMIX S5IIX, firmware 2.2, RTMP-capable region | Real 1080p25 H.264/AAC transport captured in development; five short new-app takes decoded; long-session checks pending |
 | Independent FFmpeg H.264/AAC publishers | ReceiverEngine preview, two-take reconnect and optional recording/audio tested |
 | LUMIX GH5II / Canon EOS R5 Mark II | Vendor streaming documentation reviewed; not tested with FrameRelay |
 | Credential-free RTSP cameras | Input path implemented; not hardware tested |
@@ -89,7 +89,7 @@ flowchart LR
     Engine --> Preview[Local preview]
     Engine -->|optional stream copy| MKV[Local MKV take]
     MKV -->|after disconnect| MP4[MP4 remux]
-    Engine -. BGRA frames .-> Extension[Signed camera extension — pending runtime test]
+    Engine -. BGRA frames .-> Extension[Separately signed camera provider]
     Extension -. video only .-> Client[Video application]
 ```
 

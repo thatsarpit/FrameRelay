@@ -11,6 +11,8 @@ jobs:
         run: brew list ffmpeg >/dev/null 2>&1 || brew install ffmpeg
       - name: Build receiver
         run: bash scripts/build.sh
+      - name: Compile optional webcam verification harness (no device or permission needed)
+        run: swiftc -swift-version 5 -O -framework AVFoundation -framework CoreMediaIO -framework CoreMedia -framework CoreVideo Tests/VirtualCameraHarness/main.swift -o build/VirtualCameraHarness
       - name: Compile camera extension (not activation)
         run: bash scripts/check-extension.sh
       - name: Validate configuration and real receiver flow

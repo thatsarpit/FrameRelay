@@ -1,8 +1,23 @@
-# Virtual camera: implementation and signing gate
+# Virtual camera providers
 
-Status on 10 October 2026: host CMIO sink bridge and modern source/sink camera extension compile. **Not installed or runtime verified.** The default build intentionally ships without the extension bundle. Activation cannot turn an ad-hoc receiver into an approved virtual camera.
+Status on 10 October 2026: FrameRelay supports feeding the separately signed **VirtualCamera4Mac** extension through public Core Media IO APIs. This route does not require the user to join the Apple Developer Program. The default build still excludes FrameRelay's own extension. Client interoperability must be tested on the target Mac; compilation alone is not evidence of usable video.
 
-There is no Apple Developer Program membership or valid signing identity on the development Mac. No certificate, purchase or entitlement approval has been obtained. The receiver works independently. Do not buy membership assuming this prototype is already production-ready.
+## No personal membership: separately signed provider
+
+[VirtualCamera4Mac v0.0.7](https://github.com/m96-chan/VirtualCamera4Mac/releases/tag/v0.0.7) is an independent Apache-2.0 open-source project. Install its unchanged official release into `/Applications`, launch its menu-bar app, request activation and complete macOS Camera Extensions approval. Select **VirtualCamera4Mac** in FrameRelay, connect output, then select that webcam in Recordly. The provider app owns installation and removal; FrameRelay does not use another publisher's signing identity or modify its bundle. The provider UI does not have to remain open to feed its extension.
+
+The reviewed v0.0.7 DMG SHA256 is `88846e42b6fdb96bd4b7d2a61a4b24d2600e413436d9c68c8ec8372d618126ee`. On the development Mac, its unchanged app verified with Developer ID Application **Yusuke Harada (9U26G7YWJ9)**, a stapled notarization ticket and accepted Gatekeeper assessment. This validates publisher/package integrity, not the absence of defects. It is an early hobby project with an unstable API. FrameRelay does not bundle or automatically download it.
+
+The provider accepts any local CMIO producer. Other local apps can feed it and camera clients can consume it under macOS permissions; do not treat its input as private to FrameRelay. Choose one producer at a time. **Connect webcam automatically** is opt-in and retries after the registered device appears. Disconnect disables that preference. Recording and receiver startup have independent switches.
+
+The host sends IOSurface-backed 1920×1080 BGRA samples at 30 fps through a bounded sink queue, requests matching source format and drops incoming frames if the queue is full. No growing frame backlog is kept. The provider supplies its standby image when input stalls. A camera's 25 fps network source is converted to a 30 fps webcam; this does not create additional motion detail. Video only: select a separate microphone in Recordly. Camera audio remains available in FrameRelay's optional original stream recordings.
+
+Runtime verification uses the opt-in `Tests/VirtualCameraHarness/main.swift` (synthetic bars plus changing marker). Its capture mode refuses to request camera permission. Test actual dimensions and changing frames, followed by a real Recordly session, before relying on the workflow. Public source and signed package availability alone do not establish that those tests passed.
+
+
+## FrameRelay's own extension — separate developer path
+
+There is no Apple Developer Program membership or valid signing identity on the development Mac. FrameRelay's own extension remains compile-only. This limitation does not apply to the ordinary producer feeding a separately signed provider. No membership purchase is necessary for that route.
 
 ## Intended behavior
 

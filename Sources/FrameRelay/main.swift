@@ -45,12 +45,15 @@ final class ApplicationDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if !model.engine.isBusy { model.camera.disconnect(); return .terminateNow }
-        guard !quitting else { return .terminateLater }
+        guard !quitting else { return .terminateCancel }
         quitting = true; model.camera.disconnect(); model.engine.stop()
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
-            if !self.model.engine.isBusy { timer.invalidate(); NSApp.reply(toApplicationShouldTerminate: true) }
+        // Keep the normal app run loop alive while FFmpeg exits/remuxes.
+        // terminateLater can stall process completion callbacks on some hosts.
+        let timer = Timer(timeInterval: 0.2, repeats: true) { timer in
+            if !self.model.engine.isBusy { timer.invalidate(); NSApp.terminate(nil) }
         }
-        return .terminateLater
+        RunLoop.main.add(timer, forMode: .common)
+        return .terminateCancel
     }
 }
 let app = NSApplication.shared

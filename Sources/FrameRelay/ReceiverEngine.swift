@@ -43,7 +43,7 @@ final class ReceiverEngine: ObservableObject {
     }
 
     func start(_ configuration: Configuration) {
-        guard !active else { return }
+        guard !active, !isBusy else { return }
         if let error = configuration.validationError() { update("Needs setup", error); lastError = error; return }
         config = configuration; active = true; lastError = ""; launch()
         diskTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
